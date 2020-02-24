@@ -36,7 +36,9 @@ class App extends Component {
 		this.state = {
 			searchTerm: '',
 			hintText: '',
-			gif: null
+			gif: null,
+			// We have an array of GIFs here
+			gifs: []
 		}
 	}
 
@@ -70,7 +72,11 @@ class App extends Component {
     		this.setState((prevState, props) => ({
     			...prevState,
     			// get the first result and put in the state.
-    			gif: randomGif
+    			gif: randomGif,
+    			// Here we use our spread to take the previous gifs and 
+    			// spread them out, and then add our new random gif.
+    			// onto the end of the gifs array.
+    			gifs: [...prevState.gifs, randomGif]
 
     		}))
 
@@ -150,15 +156,26 @@ class App extends Component {
 		  				onKeyPress={this.handleKeyPress}
 		  				value={searchTerm}
 		  			/>
-		  			{/*Our Stack of GIF images*/}
+		  			{/*Our Stack of GIF images
+		  			 Here we loop over our array of gif images from our state and we create multiple videos from it.*/}
 		  			{/*
 		  				Its only going to render our video when we have a gif in the state, we can test for it using &&
 		  			*/}
 		  			
-		  			{
+		  			{/*
 		  				gif && <video className="db video" autoPlay={true} loop
 							src={this.state.gif.images.original.mp4} />
-		  			}
+					*/}
+
+		  			{this.state.gifs.map(
+
+		  				gif => (
+		  					<video className="grid-item video" autoPlay={true} loop
+							src={gif.images.original.mp4} />
+						
+						)
+	  				)}
+
 		  		</div>
 		  		{/*Here we pass our userHint all of our state using a spread*/}
 		  		<UserHint {...this.state} />
