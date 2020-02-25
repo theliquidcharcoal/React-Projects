@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import loader from './images/loader.svg'
+import Gif from './gif-comp.js'
 
 // Function for Random Selection 
 const randomSelect = arr => {
@@ -150,7 +151,7 @@ class App extends Component {
 		  		<div className="search grid">
 		  			<input 
 		  				type="text" 
-		  				className="input db pb3" 
+		  				className="input db py3" 
 		  				placeholder="Type Something" 
 		  				onChange={this.handleChange}
 		  				onKeyPress={this.handleKeyPress}
@@ -170,8 +171,8 @@ class App extends Component {
 		  			{this.state.gifs.map(
 
 		  				gif => (
-		  					<video className="grid-item video" autoPlay={true} loop
-							src={gif.images.original.mp4} />
+		  					<Gif {...gif} />
+
 						
 						)
 	  				)}
