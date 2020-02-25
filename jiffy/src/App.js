@@ -35,6 +35,7 @@ class App extends Component {
 	constructor(props){
 		super(props)
 		this.state = {
+			loading: false,
 			searchTerm: '',
 			hintText: '',
 			gif: null,
@@ -52,6 +53,11 @@ class App extends Component {
 
 	searchGiphy = async searchTerm => {
 		//First we try our fetch
+		this.setState({
+			// Here we set our loading state to be true
+			// and this will show the spinner at the bottom
+			loading: true
+		});
 		try{
 			//here we use the await keyword to wait for our response to comeback.
 			const response = await fetch(
@@ -62,12 +68,18 @@ class App extends Component {
     		// const {data} gets the .data part of our response
     		const {data} = await response.json();
 
+    		// Here we check if the array of result is empty
+    		// if it is, we throw an error which will stop the
+    		// code here and handle it in the catch area
+    		if(!data.length){
+    			throw `Nothing found for ${searchTerm}`
+    		}
 
 
     		// hrere we grab random result from our images
     		const randomGif = randomSelect(data);
-    		console.log({randomGif});
-    		console.log(data)
+    		// console.log({randomGif});
+    		// console.log(data)
 
 
     		this.setState((prevState, props) => ({
@@ -77,13 +89,20 @@ class App extends Component {
     			// Here we use our spread to take the previous gifs and 
     			// spread them out, and then add our new random gif.
     			// onto the end of the gifs array.
-    			gifs: [...prevState.gifs, randomGif]
+    			gifs: [...prevState.gifs, randomGif],
+    			//we turnoff our loading spinner again
+    			loading: false
 
     		}))
 
 		  // If fetch fails, we catch it down here.
 		} catch (error) {
-
+			this.setState((prevState, props) => ({
+				...prevState,
+				hintText: `Ughhh Crap! Try Google ${searchTerm}.`,
+				loading: false
+			}))
+			console.log(error)
 		}
 	}
 
