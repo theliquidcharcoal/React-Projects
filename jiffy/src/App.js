@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import loader from './images/loader.svg'
-import Gif from './gif-comp.js'
+import loader from './images/loader.svg';
+import Gif from './gif-comp.js';
+import clearIcon from './images/close-icon.svg';
 
 // Function for Random Selection 
 const randomSelect = arr => {
@@ -12,9 +13,20 @@ const randomSelect = arr => {
 
 
 // Header Component
-const Header = () => (
+
+// We pick out our props inside the header component
+// we can pass down functions as props as well as things
+// like numbers, strings, arrays or objects.
+const Header = ({clearSearch, hasResult}) => (
 	<div className="header grid">
-		<h1 className="title">Jiffy</h1>
+
+		{hasResult 
+			? 
+			<button onClick={clearSearch}>
+				<img src={clearIcon} /> 
+			</button>
+			: 
+			<h1 className="title" onClick={clearSearch} >Jiffy</h1> }
 
 	</div>
 
@@ -34,6 +46,10 @@ class App extends Component {
 
 	constructor(props){
 		super(props)
+
+		// create a ref to store the textInput DOM element
+		this.textInput = React.createRef();
+		
 		this.state = {
 			loading: false,
 			searchTerm: '',
@@ -91,7 +107,8 @@ class App extends Component {
     			// onto the end of the gifs array.
     			gifs: [...prevState.gifs, randomGif],
     			//we turnoff our loading spinner again
-    			loading: false
+    			loading: false,
+    			hintText: `Hit enter to see more ${searchTerm}`
 
     		}))
 
@@ -159,13 +176,31 @@ class App extends Component {
 		}
 	};
 
+	// Here we reset our set by clearing everything out,
+	// Making it default again
+	clearSearch = () => {
+		this.setState((prevState, props) => ({
+			...prevState,
+			searchTerm: '',
+			hintText: '',
+			gifs: []
+		}));
+		// Here we grab the input and then focus the cursor back into it.
+		this.textInput.current.focus();
+
+	}
+
 
 	
 	render(){
-		const {searchTerm, gif} = this.state //const searchTerm = this.state.searchTerm
+		const {searchTerm, gifs} = this.state //const searchTerm = this.state.searchTerm
+		// Here 
+		const hasResult = gifs.length
+
 	  	return (
 		    <div className="page">
-		      	<Header />		  		
+		      	<Header clearSearch={this.clearSearch} hasResult={hasResult}/>	
+
 		  		{/*Search Box*/}
 		  		<div className="search grid">
 		  			<input 
@@ -175,6 +210,7 @@ class App extends Component {
 		  				onChange={this.handleChange}
 		  				onKeyPress={this.handleKeyPress}
 		  				value={searchTerm}
+		  				ref={this.textInput}
 		  			/>
 		  			{/*Our Stack of GIF images
 		  			 Here we loop over our array of gif images from our state and we create multiple videos from it.*/}
