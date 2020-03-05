@@ -14,6 +14,16 @@ const About = () => <h1>About</h1>
 
 class App extends Component {
 
+	constructor(props) {
+		super(props);
+		this.state = {
+			//whether a mix is currently playing
+			playing: false,
+			//the id of the current mix
+			currentMix: ''
+		};
+	}
+
 	mountAudio = async() => {
 		// when we use 'this' keyword, our widget is now accessible
 		// anywhere inside the component.
@@ -22,6 +32,22 @@ class App extends Component {
 		// here we wait for our widget to be ready before we continuing
 		await this.widget.ready;
 		// await this.widget.play();
+
+		this.widget.events.pause.on(
+			() => this.setState({
+				playing: false
+			})
+
+		);
+
+		this.widget.events.play.on(
+			// () => console.log('is playing')
+			() => this.setState({
+				playing: true
+			})
+		);
+
+
 		console.log(this.widget);
 	};
 
@@ -34,9 +60,16 @@ class App extends Component {
 	};
 
 	togglePlay = () => {
-		console.log('togglePlay');
+		// console.log('togglePlay');
 		// we want to togglePlay on our widget.
 		this.widget.togglePlay();
+	}
+
+	playMix = mixName => {
+		//load a new mix by its name and 
+		//then start playing it immediately
+		this.widget.load(mixName, true);
+		console.log(this.widget.load(mixName, true))
 	}
 
 
@@ -58,7 +91,16 @@ class App extends Component {
 			    			{/*Routed Page*/}
 
 			    			<div>
-			    				<button onClick={this.togglePlay}>Play / Pause</button>
+			    				<button onClick={this.togglePlay}>
+			    					{this.state.playing ? 'Pause' : 'Play'}
+			    				</button>
+			    			</div>
+
+			    			<div>
+			    				<button onClick={() => this.playMix
+			    					('/HeadphoneCommute/low-light-mixes-pno-2010/')}>
+			    					Play Mix
+			    				</button>
 			    			</div>
 
 			    			<Route exact path="/" component={Home} />
